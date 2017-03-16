@@ -1,3 +1,5 @@
+import random
+
 class Section(object):
 
     def __init__(self, name, range_start, range_end, project_names):
@@ -5,3 +7,8 @@ class Section(object):
         self.range_start = range_start
         self.range_end = range_end
         self.project_names = project_names
+
+    def get_state(self):
+        return random.choice(['ok', 'warning', 'error'])
+
+
