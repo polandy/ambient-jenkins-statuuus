@@ -1,5 +1,7 @@
 from model import Section
 
+led_count = 60
+
 jenkins_url = "https://jenkins.example.com"
 jenkins_username = "jenkins_user"
 jenkins_password = "top_secret"

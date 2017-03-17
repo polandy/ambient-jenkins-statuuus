@@ -4,7 +4,7 @@ from blinky_adapter import BlinkyAdapter
 
 
 def get_colors():
-    output_colors = [[0, 0, 0]] * 60
+    output_colors = [[0, 0, 0]] * config.led_count
 
     for section in config.sections:
 

@@ -1,6 +1,7 @@
 import sys
 import glob
 import BlinkyTape
+import config
 
 
 class BlinkyAdapter(object):
@@ -16,6 +17,8 @@ class BlinkyAdapter(object):
 
         self.bt = BlinkyTape.BlinkyTape(port)
         self.bt.displayColor(0, 0, 0)
+
+        self.colors = [[0, 0, 0]] * config.led_count
 
     def display_colors(self, colors):
         for color in colors:
