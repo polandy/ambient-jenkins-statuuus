@@ -24,4 +24,4 @@ if __name__ == "__main__":
     while True:
         time.sleep(1)
         output_colors = get_colors()
-        blinky.display_colors(output_colors)
+        blinky.fade_to_colors(output_colors)
