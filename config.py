@@ -1,7 +1,11 @@
+from datetime import time
 from model import Section
 
 led_count = 60
 request_interval = 60
+
+startup_time = time(hour=07, minute=30)
+shutdown_time = time(hour=18, minute=30)
 
 jenkins_url = "https://jenkins.example.com"
 jenkins_username = "jenkins_user"

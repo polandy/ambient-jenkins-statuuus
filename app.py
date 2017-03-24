@@ -1,5 +1,6 @@
 import time
 import config
+import datetime
 from jenkins_adapter import get_section_state_dict
 from blinky_adapter import BlinkyAdapter
 
@@ -15,9 +16,15 @@ def get_colors():
     return colors
 
 
+def active_time_range():
+    now = datetime.datetime.now().time()
+    return config.shutdown_time > now > config.startup_time
+
+
 if __name__ == "__main__":
     blinky = BlinkyAdapter()
     while True:
+        if active_time_range():
+            output_colors = get_colors()
+            blinky.fade_to_colors(output_colors)
         time.sleep(config.request_interval)
-        output_colors = get_colors()
-        blinky.fade_to_colors(output_colors)

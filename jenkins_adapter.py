@@ -1,10 +1,6 @@
 import config
 import jenkins
 
-for section in config.sections:
-    print(section.name)
-
-
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
 
