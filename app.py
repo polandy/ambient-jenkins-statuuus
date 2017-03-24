@@ -18,6 +18,6 @@ def get_colors():
 if __name__ == "__main__":
     blinky = BlinkyAdapter()
     while True:
-        time.sleep(1)
+        time.sleep(config.request_interval)
         output_colors = get_colors()
         blinky.fade_to_colors(output_colors)
