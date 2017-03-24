@@ -12,6 +12,8 @@ sections = [
     Section("regression-tests", 20, 29, ["regression-test"])
 ]
 
-color_mapping = {'ok': [0, 255, 0],
-                 'warning': [255, 255, 0],
-                 'error': [255, 0, 0]}
+color_mapping = {None: [0, 0, 255],
+                 'ABORTED': [255, 0, 255],
+                 'SUCCESS': [0, 255, 0],
+                 'UNSTABLE': [255, 255, 0],
+                 'FAILURE': [255, 0, 0]}
