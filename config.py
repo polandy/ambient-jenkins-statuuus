@@ -17,8 +17,13 @@ sections = [
     Section("regression-tests", 20, 29, ["regression-test"])
 ]
 
-color_mapping = {None: [0, 0, 255],
-                 'ABORTED': [255, 0, 255],
-                 'SUCCESS': [0, 255, 0],
-                 'UNSTABLE': [255, 255, 0],
-                 'FAILURE': [255, 0, 0]}
+color_mapping = {None: Led([0, 0, 255], None),
+                 'ABORTED': Led([255, 0, 255], None),
+                 'SUCCESS': Led([0, 255, 0], None),
+                 'UNSTABLE': Led([255, 255, 0], None),
+                 'FAILURE': Led([255, 0, 0], None),
+                 'ABORTED_building': Led([255, 0, 255], [0, 0, 255]),
+                 'SUCCESS_building': Led([0, 255, 0], [0, 0, 255]),
+                 'UNSTABLE_building': Led([255, 255, 0], [0, 0, 255]),
+                 'FAILURE_building': Led([255, 0, 0], [0, 0, 255])
+                 }
