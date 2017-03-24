@@ -34,7 +34,7 @@ def get_section_state_dict():
             try:
                 build_status = get_build_status(project_name)
                 if section in section_state:
-                    section_state[section] = min(section_state[section], build_status)
+                    section_state[section] = build_status if status_to_numbers(build_status) <  status_to_numbers(section_state[section]) else section_state[section]
                 else:
                     section_state[section] = build_status
             except jenkins.NotFoundException:
