@@ -16,14 +16,21 @@ def get_build_status(project_name):
     build_numbers = get_last_build_number(project_name)
     build_results = []
     for project_name, build_number in build_numbers.iteritems():
-        build_results.append(server.get_build_info(project_name, build_number)['result'])
+        build_info = server.get_build_info(project_name, build_number)
+        if build_info['building'] and build_number > 0:
+            build_info = server.get_build_info(project_name, build_number-1)
+            build_results.append(build_info['result'] + '_building')
+        build_results.append(build_info['result'])
     return build_results
 
 
 def status_to_numbers(argument):
     switcher = {
-        "FAILED" : -1,
-        "UNSTABLE": 0,
+        "FAILED_building" : -4,
+        "FAILED" : -3,
+        "UNSTABLE_building": -2,
+        "UNSTABLE": -1,
+        "SUCCESS_building": 0,
         "SUCCESS": 1,
     }
     return switcher.get(argument, -1)
