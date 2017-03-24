@@ -1,12 +1,19 @@
+import threading
 import time
+
+import sys
+
 import config
 import datetime
 from jenkins_adapter import get_section_state_dict
 from blinky_adapter import BlinkyAdapter
+from model import Led
+
+leds = [Led([0, 0, 0], None)] * 60
 
 
 def get_colors():
-    colors = [[0, 0, 0]] * config.led_count
+    colors = [Led([0, 0, 0], None)] * config.led_count
 
     for section, state in get_section_state_dict().iteritems():
         color = config.color_mapping[state]
@@ -21,10 +28,38 @@ def active_time_range():
     return config.shutdown_time > now > config.startup_time
 
 
-if __name__ == "__main__":
-    blinky = BlinkyAdapter()
+def led_to_colors(leds, fade_in):
+    colors = [[0, 0, 0]] * config.led_count
+    for i, led in enumerate(leds):
+        colors[i] = led.secondary_color if led.secondary_color is not None and fade_in else led.primary_color
+    return colors
+
+
+def blink_worker():
+    global leds
+    fade_in = True
     while True:
+        fade_in = not fade_in
         if active_time_range():
-            output_colors = get_colors()
-            blinky.fade_to_colors(output_colors)
-        time.sleep(config.request_interval)
+            colors = led_to_colors(leds, fade_in)
+            blinky.fade_to_colors(colors)
+
+
+if __name__ == "__main__":
+
+    try:
+
+        blinky = BlinkyAdapter()
+
+        blinker = threading.Thread(target=blink_worker)
+        blinker.daemon = True
+        blinker.start()
+
+        print("Starting...")
+        while True:
+            if active_time_range():
+                leds = get_colors()
+            time.sleep(config.request_interval)
+
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit()
