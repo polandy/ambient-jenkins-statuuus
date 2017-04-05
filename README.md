@@ -1,6 +1,11 @@
 # ambient-jenkins-statuuus
 ambient-jenkins-statuuus is a little python project to show the states of jenkins builds on a [BlinkyTape](https://github.com/Blinkinlabs/BlinkyTape).
 
+# Requirements
+* Python 2.7.9
+* [Python Jenkins](https://python-jenkins.readthedocs.io/en/latest/), a python wrapper for the Jenkins REST API
+* [pySerial](https://pythonhosted.org/pyserial/), a module that encapsulates the access for the serial port
+
 ## Config
 All the configuration happens in the file `config.py`:
 ```
@@ -23,7 +28,7 @@ jenkins_password = "top_secret;"
 # Define 'led sections'. A section consists in 
 sections = [
     Section("feature branches", 0, led_count/3-1, ["feature_branch_"]),
-    Section("sonar", led_count/3, led_count/3*2-1, ["development", "release_", "master"]),
+    Section("main branches", led_count/3, led_count/3*2-1, ["development", "release_", "master"]),
     Section("misc", led_count/3*2, led_count-1, ["regression_tests", "sonar_build"])
 ]
 
