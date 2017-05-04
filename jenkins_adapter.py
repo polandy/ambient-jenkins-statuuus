@@ -1,5 +1,7 @@
 import config
 import jenkins
+import traceback
+from datetime import datetime
 
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
@@ -50,6 +52,11 @@ def get_section_state_dict():
                         section_state[section] = state
             except jenkins.NotFoundException:
                 print 'WARNING: configured project "%s" for section "%s" not found' % (project_name, section.name)
+            except jenkins.JenkinsException:
+                print '\t ----------------WARNING: error occured (JenkinsException):---------------------- '
+                print 'INFO: datetime: %s' % (str(datetime.date()))
+                print traceback.print_exc()
+                print '\t --------------------------------------------------------------------------------- '
     return section_state
 
-get_section_state_dict()
+# get_section_state_dict()
