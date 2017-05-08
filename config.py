@@ -1,5 +1,5 @@
 from datetime import time
-from model import Section
+from model import Section, Led
 
 led_count = 60
 request_interval = 60
