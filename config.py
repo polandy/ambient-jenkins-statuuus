@@ -1,5 +1,7 @@
 from datetime import time
-from model import Section, Led
+from model import Section
+from model import Led
+from model import Job
 
 led_count = 60
 request_interval = 60
@@ -12,9 +14,9 @@ jenkins_username = "jenkins_user"
 jenkins_password = "top_secret"
 
 sections = [
-    Section("development", 0, 9, ["dev", "dev-test"]),
-    Section("sonar", 10, 19, ["sonar"]),
-    Section("regression-tests", 20, 29, ["regression-test"])
+    Section("development", 0, 9, [Job("dev", True), Job("dev-test")]),
+    Section("sonar", 10, 19, [Job("sonar")]),
+    Section("regression-tests", 20, 29, [Job("regression-test")])
 ]
 
 color_mapping = {None: Led([0, 0, 255], None),
