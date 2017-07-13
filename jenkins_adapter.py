@@ -1,60 +1,77 @@
 import config
 import jenkins
 import traceback
-from datetime import datetime
 
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
-
-def get_last_build_number(project_name):
-    project_last_build_number = dict()
-    for project in server.get_job_info_regex(project_name):
-        if project['lastBuild'] is not None:
-            project_last_build_number[project['displayName']] = project['lastBuild']['number']
-    return project_last_build_number
-
-
-def get_build_status(project_name):
-    build_numbers = get_last_build_number(project_name)
-    build_results = []
-    for project_name, build_number in build_numbers.iteritems():
-        build_info = server.get_build_info(project_name, build_number)
-        if build_info['building'] and build_number > 0:
-            build_info = server.get_build_info(project_name, build_number-1)
-            build_results.append(build_info['result'] + '_building')
-        build_results.append(build_info['result'])
-    return build_results
+states = {
+    "FAILURE_building": -4,
+    "FAILURE": -3,
+    "UNSTABLE_building": -2,
+    "UNSTABLE": -1,
+    "SUCCESS_building": 0,
+    "SUCCESS": 1,
+}
 
 
-def status_to_numbers(argument):
-    switcher = {
-        "FAILED_building" : -4,
-        "FAILED" : -3,
-        "UNSTABLE_building": -2,
-        "UNSTABLE": -1,
-        "SUCCESS_building": 0,
-        "SUCCESS": 1,
-    }
-    return switcher.get(argument, -1)
+def get_build_state(jenkins_job, job):
+    last_build = jenkins_job['lastBuild']
+    if last_build is not None:
+        if last_build['building'] and last_build['number'] > 0:
+            last_completed_build = jenkins_job['lastCompletedBuild']
+            if last_completed_build is not None:
+                job.building = True
+                return last_completed_build['result']
+        else:
+            return last_build['result']
+
+
+def get_build_states(job):
+    build_states = []
+
+    if job.pipeline:
+        for child_job in server.get_job_info(job.name, 2)['jobs']:
+            state = get_build_state(child_job, job)
+            if state is not None:
+                build_states.append(state)
+    else:
+        jenkins_job = server.get_job_info(job.name, 1)
+        state = get_build_state(jenkins_job, job)
+        if state is not None:
+            build_states.append(state)
+
+    return build_states
+
+
+def state_to_numbers(state, building):
+    switch_statement = state + "_building" if building else state
+    return states.get(switch_statement, -1)
+
+
+def number_to_state(number):
+    for key, value in states.iteritems():
+        if number == value:
+            return key
 
 
 def get_section_state_dict():
     global section
     section_state = dict()
     for section in config.sections:
-        for project_name in section.project_names:
+        for job in section.jobs:
             try:
-                build_states = get_build_status(project_name)
+                build_states = get_build_states(job)
                 for state in build_states:
+                    current_state = state_to_numbers(state, job.building)
                     if section in section_state:
-                        section_state[section] = state if status_to_numbers(state) < status_to_numbers(section_state[section]) else section_state[section]
+                        previous_state = state_to_numbers(section_state[section], job.building)
+                        section_state[section] = number_to_state(current_state) if current_state < previous_state else section_state[section]
                     else:
-                        section_state[section] = state
+                        section_state[section] = number_to_state(current_state)
             except jenkins.NotFoundException:
-                print 'WARNING: configured project "%s" for section "%s" not found' % (project_name, section.name)
+                print 'WARNING: configured job "%s" for section "%s" not found' % (job.name, section.name)
             except jenkins.JenkinsException:
                 print '\t ----------------WARNING: error occured (JenkinsException):---------------------- '
-                print 'INFO: datetime: %s' % (str(datetime.date()))
                 print traceback.print_exc()
                 print '\t --------------------------------------------------------------------------------- '
     return section_state
