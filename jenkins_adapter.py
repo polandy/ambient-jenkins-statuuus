@@ -62,12 +62,12 @@ def get_section_state_dict():
             try:
                 build_states = get_build_states(job)
                 for state in build_states:
+                    current_state = state_to_numbers(state, job.building)
                     if section in section_state:
                         previous_state = state_to_numbers(section_state[section], job.building)
-                        current_state = state_to_numbers(state, job.building)
                         section_state[section] = number_to_state(current_state) if current_state < previous_state else section_state[section]
                     else:
-                        section_state[section] = state
+                        section_state[section] = number_to_state(current_state)
             except jenkins.NotFoundException:
                 print 'WARNING: configured job "%s" for section "%s" not found' % (job.name, section.name)
             except jenkins.JenkinsException:
