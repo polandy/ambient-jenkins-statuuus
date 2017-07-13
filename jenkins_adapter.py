@@ -4,14 +4,24 @@ import traceback
 
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
+states = {
+    "FAILURE_building": -4,
+    "FAILURE": -3,
+    "UNSTABLE_building": -2,
+    "UNSTABLE": -1,
+    "SUCCESS_building": 0,
+    "SUCCESS": 1,
+}
 
-def get_build_state(job):
-    last_build = job['lastBuild']
+
+def get_build_state(jenkins_job, job):
+    last_build = jenkins_job['lastBuild']
     if last_build is not None:
         if last_build['building'] and last_build['number'] > 0:
-            last_completed_build = job['lastCompletedBuild']
+            last_completed_build = jenkins_job['lastCompletedBuild']
             if last_completed_build is not None:
-                return last_completed_build['result'] + '_building'
+                job.building = True
+                return last_completed_build['result']
         else:
             return last_build['result']
 
@@ -21,28 +31,27 @@ def get_build_states(job):
 
     if job.pipeline:
         for child_job in server.get_job_info(job.name, 2)['jobs']:
-            state = get_build_state(child_job)
+            state = get_build_state(child_job, job)
             if state is not None:
                 build_states.append(state)
     else:
         jenkins_job = server.get_job_info(job.name, 1)
-        state = get_build_state(jenkins_job)
+        state = get_build_state(jenkins_job, job)
         if state is not None:
             build_states.append(state)
 
     return build_states
 
 
-def status_to_numbers(argument):
-    switcher = {
-        "FAILURE_building": -4,
-        "FAILURE": -3,
-        "UNSTABLE_building": -2,
-        "UNSTABLE": -1,
-        "SUCCESS_building": 0,
-        "SUCCESS": 1,
-    }
-    return switcher.get(argument, -1)
+def state_to_numbers(state, building):
+    switch_statement = state + "_building" if building else state
+    return states.get(switch_statement, -1)
+
+
+def number_to_state(number):
+    for key, value in states.iteritems():
+        if number == value:
+            return key
 
 
 def get_section_state_dict():
@@ -54,7 +63,9 @@ def get_section_state_dict():
                 build_states = get_build_states(job)
                 for state in build_states:
                     if section in section_state:
-                        section_state[section] = state if status_to_numbers(state) < status_to_numbers(section_state[section]) else section_state[section]
+                        previous_state = state_to_numbers(section_state[section], job.building)
+                        current_state = state_to_numbers(state, job.building)
+                        section_state[section] = number_to_state(current_state) if current_state < previous_state else section_state[section]
                     else:
                         section_state[section] = state
             except jenkins.NotFoundException:
