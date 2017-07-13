@@ -19,13 +19,19 @@ sections = [
     Section("regression-tests", 20, 29, [Job("regression-test")])
 ]
 
-color_mapping = {None: Led([0, 0, 255], None),
-                 'ABORTED': Led([255, 0, 255], None),
-                 'SUCCESS': Led([0, 255, 0], None),
-                 'UNSTABLE': Led([255, 255, 0], None),
-                 'FAILURE': Led([255, 0, 0], None),
-                 'ABORTED_building': Led([255, 0, 255], [0, 0, 255]),
-                 'SUCCESS_building': Led([0, 255, 0], [0, 0, 255]),
-                 'UNSTABLE_building': Led([255, 255, 0], [0, 0, 255]),
-                 'FAILURE_building': Led([255, 0, 0], [0, 0, 255])
+blue = [0, 0, 255]
+red = [255, 0, 0]
+orange = [255, 92, 0]
+green = [0, 255, 0]
+pink = [255, 0, 255]
+
+color_mapping = {None: Led(blue),
+                 'ABORTED': Led(pink),
+                 'SUCCESS': Led(green),
+                 'UNSTABLE': Led(orange),
+                 'FAILURE': Led(red),
+                 'ABORTED_building': Led(pink, blue),
+                 'SUCCESS_building': Led(green, blue),
+                 'UNSTABLE_building': Led(orange, blue),
+                 'FAILURE_building': Led(red, blue)
                  }

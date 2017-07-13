@@ -9,7 +9,7 @@ class Section(object):
 
 class Led(object):
 
-    def __init__(self, primary_color, secondary_color):
+    def __init__(self, primary_color, secondary_color=None):
         self.primary_color = primary_color
         self.secondary_color = secondary_color
 
