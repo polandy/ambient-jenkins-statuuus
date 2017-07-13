@@ -19,3 +19,4 @@ class Job(object):
     def __init__(self, name, pipeline=False):
         self.name = name
         self.pipeline = pipeline
+        self.building = False
