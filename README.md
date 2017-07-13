@@ -10,6 +10,10 @@ ambient-jenkins-statuuus is a little python project to show the states of jenkin
 All the configuration happens in the file `config.py`:
 ```
 # Example configuration
+from datetime import time
+from model import Section
+from model import Led
+from model import Job
 
 # Number Of Leds
 led_count = 60
@@ -27,24 +31,30 @@ jenkins_password = "top_secret;"
 
 # Define 'led sections'. A section consists in 
 sections = [
-    Section("feature branches", 0, led_count/3-1, ["feature_branch_"]),
-    Section("main branches", led_count/3, led_count/3*2-1, ["development", "release_", "master"]),
-    Section("misc", led_count/3*2, led_count-1, ["regression_tests", "sonar_build"])
+    Section("development", 0, 9, [Job("dev", True), Job("dev-test")]),
+    Section("sonar", 10, 19, [Job("sonar")]),
+    Section("regression-tests", 20, 29, [Job("regression-test")])
 ]
 
 # The constructor of Led takes two arguments: a primary and a secondary color as RGB-codes.
 # When a build is in progress the color is switching between the primary and secondary colors.
 # You only need to change the RGB-Codes. 
-color_mapping = {None: Led([0, 0, 255], None),
-                 'ABORTED': Led([255, 0, 255], None),
-                 'SUCCESS': Led([0, 255, 0], None),
-                 'UNSTABLE': Led([255, 255, 0], None),
-                 'FAILURE': Led([255, 0, 0], None),
-                 'ABORTED_building': Led([255, 0, 255], [0, 0, 255]),
-                 'SUCCESS_building': Led([0, 255, 0], [0, 0, 255]),
-                 'UNSTABLE_building': Led([255, 255, 0], [0, 0, 255]),
-                 'FAILURE_building': Led([255, 0, 0], [0, 0, 255])
-                 }
+blue = [0, 0, 255]
+red = [255, 0, 0]
+orange = [255, 92, 0]
+green = [0, 255, 0]
+pink = [255, 0, 255]
+
+color_mapping = {None: Led(blue),
+                 'ABORTED': Led(pink),
+                 'SUCCESS': Led(green),
+                 'UNSTABLE': Led(orange),
+                 'FAILURE': Led(red),
+                 'ABORTED_building': Led(pink, blue),
+                 'SUCCESS_building': Led(green, blue),
+                 'UNSTABLE_building': Led(orange, blue),
+                 'FAILURE_building': Led(red, blue)
+}
 ```
 
 ## Run
