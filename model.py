@@ -20,3 +20,26 @@ class Job(object):
         self.name = name
         self.pipeline = pipeline
         self.building = False
+
+
+class SectionState(object):
+
+    def __init__(self, state, building=False):
+        self.state = state
+        self.intValue = self.state_to_numbers(state)
+        self.building = building
+
+    states = {
+        "FAILURE": -5,
+        "UNSTABLE": -3,
+        "ABORTED": -1,
+        "SUCCESS": 1,
+    }
+
+    def number_to_state(self, number):
+        for key, value in self.states.iteritems():
+            if number == value:
+                return key
+
+    def state_to_numbers(self, state):
+        return self.states.get(state, -1)
