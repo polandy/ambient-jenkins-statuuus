@@ -15,11 +15,14 @@ leds = [Led([0, 0, 0], None)] * 60
 def get_colors():
     colors = [Led([0, 0, 0], None)] * config.led_count
 
-    for section, state in get_section_state_dict().iteritems():
+    state_dict = get_section_state_dict()
+    for section, state in state_dict.iteritems():
+        print ''.join('{}: {}\n'.format(key.name, val) for key, val in state_dict.items())
         color = config.color_mapping[state]
         for i in range(section.range_start, section.range_end+1):
             colors[i] = color
 
+    print '-----------------------------------\n'
     return colors
 
 
