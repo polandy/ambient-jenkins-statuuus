@@ -17,8 +17,8 @@ def get_colors():
     colors = [Led([0, 0, 0], None)] * config.led_count
 
     state_dict = get_section_state_dict()
-    for section, state in state_dict.iteritems():
-        color = config.color_mapping[state]
+    for section, section_state in state_dict.iteritems():
+        color = config.color_mapping[section_state.state]
         for i in range(section.range_start, section.range_end+1):
             colors[i] = color
     print 'INFO: %s' % str(datetime.now())

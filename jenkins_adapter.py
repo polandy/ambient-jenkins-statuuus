@@ -3,18 +3,11 @@ import jenkins
 import traceback
 from datetime import datetime
 
+from model import SectionState
+
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
-states = {
-    "FAILURE_building": -6,
-    "FAILURE": -5,
-    "UNSTABLE_building": -4,
-    "UNSTABLE": -3,
-    "ABORTED_building": -2,
-    "ABORTED": -1,
-    "SUCCESS_building": 0,
-    "SUCCESS": 1,
-}
+
 
 
 def get_build_state(jenkins_job, job):
@@ -46,17 +39,6 @@ def get_build_states(job):
     return build_states
 
 
-def state_to_numbers(state, building=False):
-    switch_statement = state + "_building" if building else state
-    return states.get(switch_statement, -1)
-
-
-def number_to_state(number):
-    for key, value in states.iteritems():
-        if number == value:
-            return key
-
-
 def get_section_state_dict():
     global section
     section_state = dict()
@@ -65,12 +47,12 @@ def get_section_state_dict():
             try:
                 build_states = get_build_states(job)
                 for state in build_states:
-                    current_state = state_to_numbers(state, job.building)
+                    current_state = SectionState(state, job.building)
                     if section in section_state:
-                        previous_state = state_to_numbers(section_state[section])
-                        section_state[section] = number_to_state(current_state) if current_state < previous_state else section_state[section]
+                        previous_state = SectionState(section_state[section])
+                        section_state[section] = current_state if current_state.intValue < previous_state.intValue else section_state[section]
                     else:
-                        section_state[section] = number_to_state(current_state)
+                        section_state[section] = current_state
             except jenkins.NotFoundException:
                 print '%s WARNING: configured job "%s" for section "%s" not found' % (str(datetime.now()), job.name, section.name)
             except jenkins.JenkinsException:
