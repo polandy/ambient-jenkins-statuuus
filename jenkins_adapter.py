@@ -1,6 +1,7 @@
 import config
 import jenkins
 import traceback
+from datetime import datetime
 
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
@@ -69,11 +70,11 @@ def get_section_state_dict():
                     else:
                         section_state[section] = number_to_state(current_state)
             except jenkins.NotFoundException:
-                print 'WARNING: configured job "%s" for section "%s" not found' % (job.name, section.name)
+                print '%s WARNING: configured job "%s" for section "%s" not found' % (str(datetime.now()), job.name, section.name)
             except jenkins.JenkinsException:
                 print '\t ----------------WARNING: error occured (JenkinsException):---------------------- '
                 print traceback.print_exc()
                 print '\t --------------------------------------------------------------------------------- '
     return section_state
 
-# get_section_state_dict()
+get_section_state_dict()
