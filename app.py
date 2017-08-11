@@ -23,7 +23,7 @@ def get_colors():
         for i in range(section.range_start, section.range_end+1):
             colors[i] = color
     print 'INFO: %s' % str(datetime.now())
-    print ''.join('{}: {}\n'.format(key.name, val.state) for key, val in state_dict.items())
+    print ''.join('{}: {}{}\n'.format(key.name, val.state, "_building" if val.building else "") for key, val in state_dict.items())
     print '-----------------------------------\n'
     return colors
 
