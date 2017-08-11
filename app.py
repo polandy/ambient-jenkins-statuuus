@@ -18,11 +18,12 @@ def get_colors():
 
     state_dict = get_section_state_dict()
     for section, section_state in state_dict.iteritems():
-        color = config.color_mapping[section_state.state]
+        state_color_key = section_state.state + "_building" if section_state.building else section_state.state
+        color = config.color_mapping[state_color_key]
         for i in range(section.range_start, section.range_end+1):
             colors[i] = color
     print 'INFO: %s' % str(datetime.now())
-    print ''.join('{}: {}\n'.format(key.name, val) for key, val in state_dict.items())
+    print ''.join('{}: {}\n'.format(key.name, val.state) for key, val in state_dict.items())
     print '-----------------------------------\n'
     return colors
 
