@@ -49,8 +49,10 @@ def get_section_state_dict():
                 for state in build_states:
                     current_state = SectionState(state, job.building)
                     if section in section_state:
-                        previous_state = SectionState(section_state[section])
+                        previous_state = section_state[section]
                         section_state[section] = current_state if current_state.intValue < previous_state.intValue else section_state[section]
+                        if job.building:
+                            section_state[section].building = True
                     else:
                         section_state[section] = current_state
             except jenkins.NotFoundException:
