@@ -21,12 +21,10 @@ def get_colors():
         color = config.color_mapping[state]
         for i in range(section.range_start, section.range_end+1):
             colors[i] = color
-    print 'ERROR: %s' % str(datetime.now())
+    print 'INFO: %s' % str(datetime.now())
     print ''.join('{}: {}\n'.format(key.name, val) for key, val in state_dict.items())
     print '-----------------------------------\n'
     return colors
-
-get_colors()
 
 def active_time_range():
     now = datetime.now().time()

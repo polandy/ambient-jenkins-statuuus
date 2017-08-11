@@ -19,9 +19,9 @@ def get_build_state(jenkins_job, job):
     last_build = jenkins_job['lastBuild']
     if last_build is not None:
         if last_build['building'] and last_build['number'] > 0:
+            job.building = True
             last_completed_build = jenkins_job['lastCompletedBuild']
             if last_completed_build is not None:
-                job.building = True
                 return last_completed_build['result']
         else:
             return last_build['result']
@@ -44,7 +44,7 @@ def get_build_states(job):
     return build_states
 
 
-def state_to_numbers(state, building):
+def state_to_numbers(state, building=False):
     switch_statement = state + "_building" if building else state
     return states.get(switch_statement, -1)
 
@@ -65,7 +65,7 @@ def get_section_state_dict():
                 for state in build_states:
                     current_state = state_to_numbers(state, job.building)
                     if section in section_state:
-                        previous_state = state_to_numbers(section_state[section], job.building)
+                        previous_state = state_to_numbers(section_state[section])
                         section_state[section] = number_to_state(current_state) if current_state < previous_state else section_state[section]
                     else:
                         section_state[section] = number_to_state(current_state)
