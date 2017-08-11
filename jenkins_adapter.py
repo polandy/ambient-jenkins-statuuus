@@ -6,10 +6,12 @@ from datetime import datetime
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
 states = {
-    "FAILURE_building": -4,
-    "FAILURE": -3,
-    "UNSTABLE_building": -2,
-    "UNSTABLE": -1,
+    "FAILURE_building": -6,
+    "FAILURE": -5,
+    "UNSTABLE_building": -4,
+    "UNSTABLE": -3,
+    "ABORTED_building": -2,
+    "ABORTED": -1,
     "SUCCESS_building": 0,
     "SUCCESS": 1,
 }
