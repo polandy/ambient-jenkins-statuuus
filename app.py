@@ -4,7 +4,7 @@ import time
 import sys
 
 import config
-import datetime
+from datetime import datetime
 from jenkins_adapter import get_section_state_dict
 from blinky_adapter import BlinkyAdapter
 from model import Led
@@ -15,16 +15,20 @@ leds = [Led([0, 0, 0], None)] * 60
 def get_colors():
     colors = [Led([0, 0, 0], None)] * config.led_count
 
-    for section, state in get_section_state_dict().iteritems():
-        color = config.color_mapping[state]
+    state_dict = get_section_state_dict()
+    for section, section_state in state_dict.iteritems():
+        state_color_key = section_state.state + "_building" if section_state.building else section_state.state
+        color = config.color_mapping[state_color_key]
         for i in range(section.range_start, section.range_end+1):
             colors[i] = color
-
+    # print 'INFO: %s' % str(datetime.now())
+    # print ''.join('{}: {}{}\n'.format(key.name, val.state, "_building" if val.building else "") for key, val in state_dict.items())
+    # print '-----------------------------------\n'
     return colors
 
 
 def active_time_range():
-    now = datetime.datetime.now().time()
+    now = datetime.now().time()
     return config.shutdown_time > now > config.startup_time
 
 
@@ -46,9 +50,7 @@ def blink_worker():
 
 
 if __name__ == "__main__":
-
     try:
-
         blinky = BlinkyAdapter()
 
         blinker = threading.Thread(target=blink_worker)
