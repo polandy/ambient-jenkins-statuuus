@@ -12,7 +12,6 @@ from model import Led
 leds = [Led([0, 0, 0], None)] * 60
 
 
-
 def get_colors():
     colors = [Led([0, 0, 0], None)] * config.led_count
 
@@ -22,10 +21,11 @@ def get_colors():
         color = config.color_mapping[state_color_key]
         for i in range(section.range_start, section.range_end+1):
             colors[i] = color
-    print 'INFO: %s' % str(datetime.now())
-    print ''.join('{}: {}{}\n'.format(key.name, val.state, "_building" if val.building else "") for key, val in state_dict.items())
-    print '-----------------------------------\n'
+    # print 'INFO: %s' % str(datetime.now())
+    # print ''.join('{}: {}{}\n'.format(key.name, val.state, "_building" if val.building else "") for key, val in state_dict.items())
+    # print '-----------------------------------\n'
     return colors
+
 
 def active_time_range():
     now = datetime.now().time()
@@ -50,9 +50,7 @@ def blink_worker():
 
 
 if __name__ == "__main__":
-
     try:
-
         blinky = BlinkyAdapter()
 
         blinker = threading.Thread(target=blink_worker)

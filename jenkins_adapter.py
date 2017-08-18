@@ -9,8 +9,6 @@ from model import SectionState
 server = jenkins.Jenkins(config.jenkins_url, username=config.jenkins_username, password=config.jenkins_password)
 
 
-
-
 def get_build_state(jenkins_job, job):
     last_build = jenkins_job['lastBuild']
     if last_build is not None:
