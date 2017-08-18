@@ -1,5 +1,6 @@
 import config
 import jenkins
+import copy
 import traceback
 from datetime import datetime
 
@@ -42,7 +43,7 @@ def get_build_states(job):
 def get_section_state_dict():
     global section
     section_state = dict()
-    for section in config.sections:
+    for section in copy.deepcopy(config.sections):
         for job in section.jobs:
             try:
                 build_states = get_build_states(job)
@@ -63,4 +64,4 @@ def get_section_state_dict():
                 print '\t --------------------------------------------------------------------------------- '
     return section_state
 
-get_section_state_dict()
+# get_section_state_dict()
